@@ -105,7 +105,7 @@ export default function Navbar() {
         <a
           href="#home"
           className="relative z-10 flex items-end gap-1"
-          aria-label="Uifry home"
+          aria-label="Uifry, ir para o início"
         >
           <Image
             src="/logo-uifry.svg"
@@ -119,20 +119,20 @@ export default function Navbar() {
           </sup>
         </a>
 
-        <nav className="relative z-10 hidden lg:block" aria-label="Primary">
+        <nav className="relative z-10 hidden lg:block" aria-label="Principal">
           <NavLinks activeHref={activeHref} />
         </nav>
 
         <div className="relative z-10 hidden lg:block">
           <Button href="#download" size="sm">
-            Download
+            Baixar app
           </Button>
         </div>
 
         <button
           type="button"
           className="relative z-10 flex h-10 w-10 flex-col items-center justify-center gap-1.5 lg:hidden"
-          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={isOpen}
           onClick={() => setIsOpen((open) => !open)}
         >
@@ -156,7 +156,7 @@ export default function Navbar() {
             onNavigate={() => setIsOpen(false)}
           />
           <Button href="#download" onClick={() => setIsOpen(false)}>
-            Download
+            Baixar app
           </Button>
         </div>
       )}
@@ -245,7 +245,7 @@ function NavLinks({
               onClick={onNavigate}
               // Weight stays fixed so the label doesn't change width when it
               // becomes active — that would leave the indicator misaligned.
-              className={`block font-display font-medium whitespace-nowrap capitalize transition-colors hover:text-accent ${
+              className={`block font-display font-medium whitespace-nowrap transition-colors hover:text-accent ${
                 isHorizontal ? "text-[17px] leading-[24px]" : "text-[20px] leading-[26px]"
               } ${isActive ? "text-accent" : "text-black"}`}
             >

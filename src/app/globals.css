@@ -29,6 +29,200 @@
   }
 }
 
+/*
+ * Glows laranja (Hero + Features).
+ *
+ * No Figma cada glow é uma elipse sólida passada por `feGaussianBlur`. Exportado
+ * como SVG, o browser rasteriza esse filtro em 8 bits e *sem dithering*, o que
+ * produz o banding visível nos degradês. `radial-gradient` resolve: o compositor
+ * dithera gradientes, então a rampa sai contínua em qualquer DPR — e o arquivo
+ * deixa de existir.
+ *
+ * Os stops não são estéticos: são o perfil medido do próprio filtro. Cada forma
+ * (`a`, `b`, `σ`) foi rasterizada isolada num canvas e amostrada a cada 10% do
+ * raio, ao longo de x, y e da diagonal — a média dessas leituras é `--s1`…`--s9`
+ * e o valor no centro é `--p`. O pico nunca é 1 porque o eixo menor da elipse é
+ * da ordem de σ, então o blur já come parte da intensidade no próprio centro.
+ *
+ * A extensão do gradiente é `a + 2.5σ` em cada eixo (onde a gaussiana já caiu a
+ * ~0.5%), que é também a caixa do elemento — ver `Glow`.
+ *
+ * Tudo em porcentagem: os stops resolvem contra a caixa do elemento, então o
+ * mesmo CSS serve para a caixa fixa do desktop e para a caixa reduzida do
+ * mobile (Features) sem recalcular nada.
+ *
+ * Cor final escrita como `rgb(… / 0)` e não `transparent`: o valor inicial de
+ * `transparent` é `rgb(0 0 0 / 0)`, que puxaria a rampa para o cinza.
+ */
+.glow {
+  --glow-hot: 255 85 85; /* #FF5555, mesmo tom do --color-accent */
+  --glow-warm: 253 229 152; /* #FDE598 */
+
+  /* Perfil padrão: a=143.5, b=76.5, σ=50 (glow do título e glow direito). */
+  --p: 0.841;
+  --s1: 0.97;
+  --s2: 0.885;
+  --s3: 0.759;
+  --s4: 0.577;
+  --s5: 0.392;
+  --s6: 0.231;
+  --s7: 0.115;
+  --s8: 0.037;
+  --s9: 0.016;
+
+  --stops-hot:
+    rgb(var(--glow-hot) / var(--p)) 0%,
+    rgb(var(--glow-hot) / calc(var(--p) * var(--s1))) 10%,
+    rgb(var(--glow-hot) / calc(var(--p) * var(--s2))) 20%,
+    rgb(var(--glow-hot) / calc(var(--p) * var(--s3))) 30%,
+    rgb(var(--glow-hot) / calc(var(--p) * var(--s4))) 40%,
+    rgb(var(--glow-hot) / calc(var(--p) * var(--s5))) 50%,
+    rgb(var(--glow-hot) / calc(var(--p) * var(--s6))) 60%,
+    rgb(var(--glow-hot) / calc(var(--p) * var(--s7))) 70%,
+    rgb(var(--glow-hot) / calc(var(--p) * var(--s8))) 80%,
+    rgb(var(--glow-hot) / calc(var(--p) * var(--s9))) 90%,
+    rgb(var(--glow-hot) / 0) 100%;
+
+  --stops-warm:
+    rgb(var(--glow-warm) / var(--p)) 0%,
+    rgb(var(--glow-warm) / calc(var(--p) * var(--s1))) 10%,
+    rgb(var(--glow-warm) / calc(var(--p) * var(--s2))) 20%,
+    rgb(var(--glow-warm) / calc(var(--p) * var(--s3))) 30%,
+    rgb(var(--glow-warm) / calc(var(--p) * var(--s4))) 40%,
+    rgb(var(--glow-warm) / calc(var(--p) * var(--s5))) 50%,
+    rgb(var(--glow-warm) / calc(var(--p) * var(--s6))) 60%,
+    rgb(var(--glow-warm) / calc(var(--p) * var(--s7))) 70%,
+    rgb(var(--glow-warm) / calc(var(--p) * var(--s8))) 80%,
+    rgb(var(--glow-warm) / calc(var(--p) * var(--s9))) 90%,
+    rgb(var(--glow-warm) / 0) 100%;
+}
+
+/*
+ * Duas elipses empilhadas, vermelha por cima da amarela — a mesma ordem de
+ * desenho do SVG. Serve ao glow do título do Hero e ao glow direito da Features:
+ * são a mesma forma, só mudam de tamanho (a caixa vem do componente).
+ */
+.glow--duo {
+  background:
+    radial-gradient(47.09% 41.98% at 52.91% 41.98%, var(--stops-hot)),
+    radial-gradient(47.62% 41.98% at 47.62% 58.02%, var(--stops-warm));
+}
+
+/*
+ * Idem, espelhado na vertical: na seção 2 a amarela fica em cima. Elipses
+ * maiores (a≈178, b≈94.8, σ=51.58), então o perfil é mais cheio que o padrão.
+ */
+.glow--duo-flip {
+  --p: 0.918;
+  --s1: 0.979;
+  --s2: 0.92;
+  --s3: 0.803;
+  --s4: 0.643;
+  --s5: 0.455;
+  --s6: 0.274;
+  --s7: 0.144;
+  --s8: 0.056;
+  --s9: 0.019;
+  background:
+    radial-gradient(46.86% 41.21% at 53.14% 58.79%, var(--stops-hot)),
+    radial-gradient(47.43% 41.21% at 47.43% 41.2%, var(--stops-warm));
+}
+
+/*
+ * Glow dos celulares do Hero: elipse única girada 150°. A rotação vive no
+ * `::before` porque o elemento posicionado está em `-z-10` — transformá-lo
+ * criaria um stacking context próprio e ele voltaria para a frente do conteúdo
+ * (regressão documentada em specs/02-hero.md).
+ */
+.glow--phones {
+  --p: 0.953;
+  --s1: 0.985;
+  --s2: 0.932;
+  --s3: 0.838;
+  --s4: 0.688;
+  --s5: 0.502;
+  --s6: 0.312;
+  --s7: 0.157;
+  --s8: 0.066;
+  --s9: 0.022;
+}
+
+.glow--phones::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 655.4px;
+  height: 472px;
+  translate: -50% -50%;
+  rotate: 150deg;
+  background: radial-gradient(50% 50% at 50% 50%, var(--stops-hot));
+}
+
+/*
+ * Modal do vídeo (`<dialog>` + `showModal()`).
+ *
+ * Animar um dialog não é o caso comum de transição: ele sai de `display: none`
+ * e é promovido para a top layer no mesmo frame em que abre. Daí as três peças
+ * abaixo — `@starting-style` (o estado "de onde" não existe antes da promoção,
+ * então não há o que interpolar sem ele), `display ... allow-discrete` (sem
+ * isso o `display: none` do fechamento corta a saída no primeiro frame) e
+ * `overlay ... allow-discrete` (idem para a saída da top layer, que é o que
+ * mantém o backdrop pintado durante o fade de saída).
+ */
+.video-dialog,
+.video-dialog::backdrop {
+  transition:
+    opacity 300ms var(--ease-fluid),
+    transform 300ms var(--ease-fluid),
+    display 300ms allow-discrete,
+    overlay 300ms allow-discrete;
+}
+
+.video-dialog::backdrop {
+  background: rgb(0 0 0 / 0.75);
+}
+
+.video-dialog,
+.video-dialog::backdrop {
+  opacity: 0;
+}
+
+.video-dialog {
+  transform: scale(0.96);
+}
+
+.video-dialog[open],
+.video-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+.video-dialog[open] {
+  transform: none;
+}
+
+@starting-style {
+  .video-dialog[open],
+  .video-dialog[open]::backdrop {
+    opacity: 0;
+  }
+
+  .video-dialog[open] {
+    transform: scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-dialog,
+  .video-dialog::backdrop {
+    transition: none;
+  }
+
+  .video-dialog[open] {
+    transform: none;
+  }
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: var(--spacing-header);

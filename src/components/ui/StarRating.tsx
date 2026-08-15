@@ -27,7 +27,7 @@ export default function StarRating({
   return (
     <div
       role="img"
-      aria-label={`${value} out of 5 stars`}
+      aria-label={`${value} de 5 estrelas`}
       className={`flex items-center gap-1 ${className}`}
     >
       {STARS.map((index) => (

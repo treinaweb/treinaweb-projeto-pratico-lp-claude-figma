@@ -37,7 +37,10 @@ export default function Button({
   ...rest
 }: ButtonProps & { size?: Size }) {
   const classes = [
-    "inline-flex items-center justify-center gap-2 font-display font-medium capitalize transition-colors hover:bg-black/80",
+    // Sem `capitalize`: o design é em inglês, onde title case é a norma. Em
+    // pt-BR a convenção é sentence case, então o rótulo já vem escrito como
+    // deve aparecer — "Começar grátis", não "Começar Grátis".
+    "inline-flex items-center justify-center gap-2 font-display font-medium transition-colors hover:bg-black/80",
     SIZE_CLASSES[size],
     VARIANT_CLASSES[variant],
     className,

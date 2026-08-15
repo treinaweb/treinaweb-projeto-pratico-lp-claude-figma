@@ -10,8 +10,9 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Uifry — Finance Bank Money App",
-  description: "Download a free bundle worth $549 and join the waitlist!",
+  title: "Uifry — Seu dinheiro organizado no automático",
+  description:
+    "Conecte bancos, cartões e investimentos pelo Open Finance e veja num só lugar quanto você já gastou e quanto ainda pode gastar este mês. Grátis para começar.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -20,7 +21,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     // this element before React hydrates, which is by definition an attribute
     // the server markup doesn't have.
     <html
-      lang="en"
+      lang="pt-BR"
       suppressHydrationWarning
       className={`${jakarta.variable} antialiased overflow-x-clip`}
     >

@@ -22,29 +22,29 @@ const SLOTS = [
 const TESTIMONIALS = [
   {
     avatar: "/testimonials/avatar-1.jpg",
-    name: "Aiko Tanaka",
-    role: "Chief Financial Officer",
-    headline: "The Best Financial Accounting App Ever!",
+    name: "Mariana Tanaka",
+    role: "Diretora financeira",
+    headline: "Fechei o mês no azul pela primeira vez em anos",
     quote:
-      "Arcu at dictum sapien, mollis. Vulputate sit id accumsan, ultricies. In ultrices malesuada elit mauris etiam odio. Duis tristique lacus, et blandit viverra nisl velit.",
+      "Eu tinha conta em três bancos e nunca sabia o saldo real. Conectei tudo em dez minutos e no primeiro mês descobri R$ 640 em assinaturas que eu nem lembrava que existiam.",
     rating: 5,
   },
   {
     avatar: "/testimonials/avatar-2.jpg",
-    name: "Marcus Webb",
-    role: "Product Manager",
-    headline: "Finally, Budgeting That Feels Effortless",
+    name: "Rodrigo Alencar",
+    role: "Gerente de produto",
+    headline: "Finalmente um orçamento que eu consigo manter",
     quote:
-      "Sed mattis rhoncus, diam suspendisse sit nunc, gravida eu. Lectus eget eget ac dolor neque lorem sapien, suspendisse aliquam gravida eu lectus eget.",
+      "O aviso de 80% do limite mudou tudo. Antes eu descobria o estrago quando a fatura chegava; agora ajusto no meio do mês e ainda sobra para investir.",
     rating: 5,
   },
   {
     avatar: "/testimonials/avatar-3.jpg",
-    name: "Sophie Bennett",
-    role: "Freelance Designer",
-    headline: "My Savings Finally Make Sense",
+    name: "Camila Duarte",
+    role: "Designer freelancer",
+    headline: "Separar o dinheiro da PJ ficou simples",
     quote:
-      "Nunc scelerisque aliquet faucibus tincidunt eu adipiscing sociis arcu lorem porttitor, cum et convallis risus placerat aliquam nunc scelerisque.",
+      "Como freelancer, minha renda varia todo mês. As metas por categoria me mostram quanto posso tirar sem comprometer os impostos. Só senti falta de um relatório anual para o contador.",
     rating: 4,
   },
 ] as const;
@@ -67,10 +67,10 @@ export default function Testimonials() {
     >
       <Reveal className="mx-auto max-w-[455px] text-center lg:mx-0 lg:max-w-none lg:text-left">
         <p className="font-display text-[18px] leading-[28px] font-medium tracking-[2.88px] text-accent uppercase">
-          testimonial
+          depoimentos
         </p>
-        <h2 className="mt-1 font-display text-[36px] leading-[40px] font-bold capitalize lg:text-[48px] lg:leading-[48px]">
-          What our users say about us?
+        <h2 className="mt-1 font-display text-[36px] leading-[40px] font-bold lg:text-[48px] lg:leading-[48px]">
+          O que nossos usuários dizem
         </h2>
       </Reveal>
 
@@ -85,7 +85,7 @@ export default function Testimonials() {
 
           <div
             role="tablist"
-            aria-label="Testimonials"
+            aria-label="Depoimentos"
             className="absolute inset-0"
           >
             {TESTIMONIALS.map((testimonial, index) => {
@@ -162,7 +162,7 @@ export default function Testimonials() {
             key={activeIndex}
             className="animate-reveal-in motion-reduce:animate-none"
           >
-            <h3 className="font-display text-[24px] leading-[32px] font-bold capitalize lg:text-[28px] lg:leading-[36px]">
+            <h3 className="font-display text-[24px] leading-[32px] font-bold lg:text-[28px] lg:leading-[36px]">
               {active.headline}
             </h3>
             <StarRating
@@ -183,7 +183,7 @@ export default function Testimonials() {
                 />
               </div>
               <div className="text-left">
-                <p className="font-display text-[16px] leading-[22px] font-semibold capitalize">
+                <p className="font-display text-[16px] leading-[22px] font-semibold">
                   {active.name}
                 </p>
                 <p className="font-display text-[14px] leading-[20px] font-medium text-black/50">
