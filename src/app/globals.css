@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+@theme {
+  --color-accent: #ff5555;
+  --color-ink: #000000;
+  --font-display: var(--font-clash), sans-serif;
+  --font-sans: var(--font-jakarta), sans-serif;
+  --spacing-container: 1090px;
+  /* Navbar geometry: the bar narrows to `container-compact` once it detaches. */
+  --spacing-container-compact: 960px;
+  /* Clearance for anchor landings — the detached bar's height plus its offset. */
+  --spacing-header: 88px;
+  /* easeOutQuint: long deceleration, reads as settling rather than stopping. */
+  --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Content swapping in place (the testimonial panel), as opposed to the
+     scroll-triggered `[data-reveal]` entrances below. */
+  --animate-reveal-in: reveal-in 400ms var(--ease-fluid) both;
+
+  @keyframes reveal-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--spacing-header);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  background: #ffffff;
+  color: var(--color-ink);
+}
+
+/*
+ * Scroll-reveal. `<Reveal>` marks an element with `data-reveal="<variant>"`
+ * and flips `data-revealed` on once it first enters the viewport.
+ *
+ * Everything is scoped under `[data-js]` — set by an inline script in the
+ * document head — so the hidden start state only exists when JS is there to
+ * undo it. Without that gate, a failed hydration leaves the page blank.
+ */
+[data-js] [data-reveal] {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition:
+    opacity 700ms var(--ease-fluid) var(--reveal-delay, 0ms),
+    transform 700ms var(--ease-fluid) var(--reveal-delay, 0ms);
+}
+
+[data-js] [data-reveal="rise"] {
+  transform: translateY(24px);
+}
+
+[data-js] [data-reveal="zoom"] {
+  transform: scale(0.96);
+}
+
+/* Opacity only. Used for the hero/features glows, whose compositing is
+   fragile enough already — a transform would make each one its own stacking
+   context (see specs/02-hero.md). */
+[data-js] [data-reveal="fade"] {
+  transform: none;
+}
+
+[data-js] [data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
