@@ -64,7 +64,8 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative mx-auto max-w-(--spacing-container) px-6 pt-14 pb-20 lg:px-0 lg:pt-[115px] lg:pb-[180px]"
+      data-section="home"
+      className="scene-section relative mx-auto max-w-(--spacing-container) px-6 pt-14 pb-20 lg:px-0 lg:pt-[115px] lg:pb-[180px]"
     >
       {/* Glows em CSS (ver globals.css): degradê dithered pelo compositor, sem o
           banding que o `feGaussianBlur` do SVG produzia. Continuam revelando só
@@ -74,17 +75,20 @@ export default function Hero() {
       <Glow
         variant="title"
         {...DECOR.glowTitle}
-        className="hidden lg:block"
+        className="scene-hero-out hidden lg:block"
       />
 
+      {/* Na cena este glow não sai junto do resto do Hero: ele faz crossfade
+          com o glow da Features enquanto o celular viaja, então tem a própria
+          fase (`--p-glow`). */}
       <Glow
         variant="phones"
         {...DECOR.glowPhones}
         delay={100}
-        className="hidden lg:block"
+        className="scene-glow-hero hidden lg:block"
       />
 
-      <div className="relative z-10 mx-auto max-w-[638px] text-center lg:mx-0 lg:text-left">
+      <div className="scene-hero-out relative z-10 mx-auto max-w-[638px] text-center lg:mx-0 lg:text-left">
         <Reveal>
           <h1 className="font-display text-[40px] leading-[44px] font-bold md:text-[52px] md:leading-[56px] lg:max-w-[618px] lg:text-[64px] lg:leading-[64px]">
             Tome as melhores decisões financeiras
@@ -122,7 +126,7 @@ export default function Hero() {
         <Reveal
           aria-hidden
           delay={250}
-          className="pointer-events-none absolute"
+          className="scene-hero-out pointer-events-none absolute"
           style={DECOR.badgeCard}
         >
           <Image
@@ -138,11 +142,14 @@ export default function Hero() {
             duas camadas: os anéis em vetor (os mesmos da seção 2 — é o mesmo
             elemento do design) e um celular único renderizado em alta
             resolução, levemente inclinado para não ficar idêntico à seção 2. */}
+        {/* No modo cena quem aparece é o `TravelPhone`, que viaja daqui até a
+            posição da Features. Este palco continua sendo a versão estática —
+            mobile, sem JS e movimento reduzido. */}
         <Reveal
           aria-hidden
           variant="zoom"
           delay={150}
-          className="pointer-events-none absolute"
+          className="scene-static-phone pointer-events-none absolute"
           style={DECOR.phoneStage}
         >
           <Image
@@ -172,7 +179,7 @@ export default function Hero() {
           aria-hidden
           variant="zoom"
           delay={300}
-          className="pointer-events-none absolute"
+          className="scene-hero-out pointer-events-none absolute"
           style={DECOR.starTop}
         >
           <Image src="/hero/star.svg" alt="" fill sizes="46px" />
@@ -182,7 +189,7 @@ export default function Hero() {
           aria-hidden
           variant="zoom"
           delay={350}
-          className="pointer-events-none absolute"
+          className="scene-hero-out pointer-events-none absolute"
           style={DECOR.starBottom}
         >
           <Image src="/hero/star.svg" alt="" fill sizes="46px" />

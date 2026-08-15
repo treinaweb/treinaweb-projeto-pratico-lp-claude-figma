@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import Glow from "@/components/ui/Glow";
 import Reveal from "@/components/ui/Reveal";
 
@@ -94,14 +95,15 @@ export default function Features() {
   return (
     <section
       id="features"
-      className="relative mx-auto max-w-(--spacing-container) px-6 pt-16 pb-20 lg:px-0 lg:pt-[384px] lg:pb-[169px] lg:scroll-mt-[-260px]"
+      data-section="features"
+      className="scene-section relative mx-auto max-w-(--spacing-container) px-6 pt-16 pb-20 lg:px-0 lg:pt-[384px] lg:pb-[169px] lg:scroll-mt-[-260px]"
     >
       {/* Right-edge glow, sits behind everything. Opacity-only reveal, same
           reasoning as the hero glows. */}
       <Glow
         variant="features-right"
         {...DECOR.glowRight}
-        className="hidden lg:block"
+        className="scene-feat-in hidden lg:block"
       />
 
       {/* Phone artwork. Era um SVG único de 532KB (glow borrado + anéis + um
@@ -113,7 +115,7 @@ export default function Features() {
       <Reveal
         aria-hidden
         variant="zoom"
-        className="pointer-events-none relative mx-auto mb-10 h-[420px] w-[400px] lg:absolute lg:mx-0 lg:mb-0 lg:h-[761px] lg:w-[724px] lg:left-[-133.155px] lg:top-[256px]"
+        className="scene-static-phone pointer-events-none relative mx-auto mb-10 h-[420px] w-[400px] lg:absolute lg:mx-0 lg:mb-0 lg:h-[761px] lg:w-[724px] lg:left-[-133.155px] lg:top-[256px]"
       >
         <Glow variant="features-phone" {...STAGE.glow} />
 
@@ -147,13 +149,20 @@ export default function Features() {
         rules left to resolve by source order — Tailwind doesn't guarantee a
         custom breakpoint's generated block sorts after `lg`'s.
       */}
-      <div className="relative z-10 lg:w-[638px] lg:max-[1439px]:ml-[452px] min-[1440px]:ml-[555px]">
-        <Reveal>
+      {/* `--i` é o índice de cascata que o CSS da cena usa para escalonar a
+          subida dos blocos — o equivalente, no scroll, ao `delay` que o
+          `<Reveal>` aplica no tempo. */}
+      <div className="scene-feat-col relative z-10 lg:w-[638px] lg:max-[1439px]:ml-[452px] min-[1440px]:ml-[555px]">
+        <Reveal className="scene-feat-item" style={{ "--i": 0 } as CSSProperties}>
           <p className="font-display text-[18px] leading-[28px] font-medium tracking-[2.88px] text-accent uppercase">
             recursos
           </p>
         </Reveal>
-        <Reveal delay={80}>
+        <Reveal
+          delay={80}
+          className="scene-feat-item"
+          style={{ "--i": 1 } as CSSProperties}
+        >
           <h2 className="mt-1 font-display text-[36px] leading-[40px] font-bold lg:text-[48px] lg:leading-[48px]">
             Uifry Premium
           </h2>
@@ -161,7 +170,12 @@ export default function Features() {
 
         <div className="mt-8 flex flex-col gap-8">
           {FEATURES.map(({ icon, title, body }, index) => (
-            <Reveal key={index} delay={160 + index * 80}>
+            <Reveal
+              key={index}
+              delay={160 + index * 80}
+              className="scene-feat-item"
+              style={{ "--i": index + 2 } as CSSProperties}
+            >
               <div className="flex items-center gap-2">
                 <Image src={icon} alt="" width={24} height={24} aria-hidden />
                 <p className="font-display text-[18px] leading-[28px] font-semibold">

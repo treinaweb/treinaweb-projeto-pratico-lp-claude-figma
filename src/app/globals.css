@@ -284,3 +284,243 @@ body {
     animation: none !important;
   }
 }
+
+/* ==========================================================================
+ * Cena Hero → Features (ver specs/07-cena-scroll.md)
+ *
+ * O estado padrão — este bloco — é a **página estática de sempre**: o trilho e
+ * o palco são `display: contents`, então somem do layout e as duas seções
+ * ficam empilhadas com a marcação que as specs 02 e 03 validaram. Tudo o que
+ * a cena acrescenta vive na `@media` mais abaixo.
+ *
+ * É por isso que não existe um reset de `prefers-reduced-motion` aqui: a
+ * condição está na própria media query, então movimento reduzido não é um
+ * segundo caminho de código — é simplesmente o caminho padrão.
+ * ========================================================================== */
+
+.scene__track,
+.scene__stage,
+.scene__box,
+.scene__hero,
+.scene__features {
+  display: contents;
+}
+
+.scene__anchor,
+.scene__phone {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+ * Modo cena. A condição precisa bater com `SCENE_MQ` em `ScrollScene.tsx`.
+ * -------------------------------------------------------------------------- */
+@media (min-width: 1024px) and (min-height: 620px) and (prefers-reduced-motion: no-preference) {
+  [data-js] .scene {
+    /* Fallbacks para o primeiro quadro, antes de o rAF escrever qualquer
+       coisa: a cena nasce no estado Hero. */
+    --p: 0;
+    --p-phone: 0;
+    --p-hero: 0;
+    --p-glow: 0;
+    --p-feat: 0;
+
+    /*
+     * A caixa de projeto tem 700px de altura (a do celular no estado Hero) e
+     * precisa caber numa tela presa, descontada a navbar. Encolher a cena
+     * inteira é o que mantém a composição coerente em telas baixas — abaixo de
+     * 620px de altura a media query nem entra e a página estática assume.
+     */
+    --scene-fit: clamp(0.7, calc((100vh - 130px) / 700), 1);
+  }
+
+  [data-js] .scene__track {
+    display: block;
+    position: relative;
+    /* 250vh de trilho = 150vh de curso útil com o palco preso. */
+    height: 250vh;
+  }
+
+  [data-js] .scene__anchor {
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+  }
+
+  [data-js] .scene__stage {
+    display: grid;
+    place-content: center;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    /* Folga para a navbar, que é `sticky` e passa por cima do palco. */
+    padding-top: var(--spacing-header);
+  }
+
+  [data-js] .scene__box {
+    display: block;
+    position: relative;
+    width: var(--spacing-container);
+    height: 700px;
+    transform: scale(var(--scene-fit));
+  }
+
+  [data-js] .scene__hero,
+  [data-js] .scene__features {
+    display: block;
+  }
+
+  /*
+   * As duas seções entram na caixa como camadas absolutas, deslocadas de modo
+   * que o **sistema de coordenadas interno de cada uma continue valendo**:
+   * o Hero mede a partir de `frameY − 100` e a cena a partir do topo do
+   * device do Hero, que está em section-y 33.74; a Features mede a partir de
+   * `frameY − 687` e o topo do palco dela está em section-y 256, que aqui é
+   * −10. Daí os dois deslocamentos abaixo.
+   *
+   * O ganho é que nenhuma coordenada de decorativo precisou ser reescrita —
+   * `DECOR`, `STAGE` e as margens das colunas de texto seguem exatamente como
+   * as specs 02 e 03 as deixaram.
+   */
+  [data-js] .scene__hero > .scene-section {
+    position: absolute;
+    left: 0;
+    top: -33.74px;
+    width: var(--spacing-container);
+    padding-bottom: 0;
+  }
+
+  [data-js] .scene__features > .scene-section {
+    position: absolute;
+    left: 0;
+    top: -266px;
+    width: var(--spacing-container);
+    padding-bottom: 0;
+  }
+
+  /* Os dois celulares parados dão lugar ao que viaja. */
+  [data-js] .scene .scene-static-phone {
+    display: none;
+  }
+
+  /*
+   * O `<Reveal>` é desligado dentro da cena. Ele anima no *tempo*, a partir de
+   * um `IntersectionObserver`; aqui tudo está preso na tela desde o primeiro
+   * quadro, então ele dispararia de uma vez e brigaria com as regras de
+   * progresso logo abaixo. A entrada inicial do Hero continua vindo dele fora
+   * do modo cena.
+   */
+  [data-js] .scene [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+
+  /* ---- o celular que viaja ---------------------------------------------- */
+
+  [data-js] .scene__phone {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 354.7px;
+    height: 700px;
+    pointer-events: none;
+    /* Abaixo das colunas de texto (que são `relative z-10` nas duas seções):
+       o glow que viaja dentro do celular é uma luz difusa e não pode lavar o
+       texto do Hero enquanto ele ainda está saindo. */
+    z-index: 0;
+    /* Origem no canto superior esquerdo: é o ponto cuja trajetória `TRAVEL`
+       descreve, e o que faz `scale()` não arrastar o celular junto. */
+    transform-origin: 0 0;
+    transform: translate3d(
+        calc(708.93px + (102.86px - 708.93px) * var(--p-phone)),
+        calc(98px * var(--p-phone)),
+        0
+      )
+      scale(calc(1 + (0.720552 - 1) * var(--p-phone)));
+    will-change: transform;
+  }
+
+  /* Os anéis não giram — no Hero também não giram, só o device gira dentro
+     deles. A escala local compensa a do pai, porque a proporção anéis/celular
+     é diferente nas duas pontas (721/354.7 contra 724/255.54). */
+  [data-js] .scene__rings {
+    --s: calc(0.995856 + (1.387824 - 0.995856) * var(--p-phone));
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 724px;
+    height: 761px;
+    /* O `translate` final é aplicado *dentro* de `scale`, então o deslocamento
+       de (−1.78, 20.3) acompanha a escala — que é justamente o que faz o par
+       anéis+celular fechar nas duas pontas. */
+    transform: translate(-50%, -50%) scale(var(--s)) translate(-1.78px, 20.3px);
+  }
+
+  [data-js] .scene__device {
+    position: absolute;
+    inset: 0;
+    /* Em torno do centro, como o `rotate-[-10deg]` do Hero. */
+    transform: rotate(calc(-10deg * (1 - var(--p-phone))));
+  }
+
+  [data-js] .scene__screen {
+    position: absolute;
+    /* `left/top/width/height` vêm de `SCREEN_BAND`, no style inline. */
+    background: #ffffff;
+    /*
+     * A borda de cima encosta no branco liso do PNG (a faixa entre a Dynamic
+     * Island e o começo do app). Qualquer desvio do branco no vídeo vira uma
+     * linha reta bem visível ali, e um modelo generativo não garante o branco
+     * exato quadro a quadro. Um degradê de 3% dissolve a emenda.
+     *
+     * Embaixo não há máscara de propósito: a faixa termina exatamente no topo
+     * da tab bar do PNG, e ali uma borda dura é o que se espera — é conteúdo
+     * de app passando por baixo da navegação. Suavizar faria a "Transaction"
+     * do PNG fantasmar por cima do vídeo.
+     */
+    mask-image: linear-gradient(to bottom, transparent 0, #000 3%);
+  }
+
+  /* ---- Hero saindo ------------------------------------------------------- */
+
+  [data-js] .scene .scene-hero-out {
+    opacity: calc(1 - var(--p-hero));
+    transform: translateY(calc(-48px * var(--p-hero)));
+  }
+
+  /* ---- glows em crossfade ------------------------------------------------ */
+
+  [data-js] .scene .scene-glow-hero {
+    opacity: calc(1 - var(--p-glow));
+  }
+
+  [data-js] .scene .scene-glow-feat {
+    opacity: var(--p-glow);
+  }
+
+  /* ---- Features entrando ------------------------------------------------- */
+
+  [data-js] .scene .scene-feat-in {
+    opacity: var(--p-feat);
+  }
+
+  /*
+   * Cascata sem normalizar a janela: cada item começa 0.06 depois do anterior
+   * e sobe 1.35× mais rápido que o progresso bruto. Dividir por
+   * `1 − 0.06 × var(--i)` para todos terminarem juntos exigiria uma divisão
+   * por expressão dentro de `calc()`, e o escalonamento no fim é justamente o
+   * que dá o efeito de cascata.
+   */
+  [data-js] .scene .scene-feat-item {
+    --pi: clamp(
+      0,
+      calc((var(--p-feat) - 0.06 * var(--i, 0)) * 1.35),
+      1
+    );
+    opacity: var(--pi);
+    transform: translateY(calc(32px * (1 - var(--pi))));
+  }
+}
