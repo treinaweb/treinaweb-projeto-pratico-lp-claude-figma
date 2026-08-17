@@ -4,7 +4,7 @@ Landing page construída a partir de um design do Figma, desenvolvida como **pro
 
 O objetivo é mostrar, na prática, o caminho completo de **design → código**: partir de um layout pronto no Figma, extrair medidas, cores e tipografia, e reconstruir a página em Next.js com fidelidade ao design — documentando cada decisão em specs versionadas junto do código.
 
-Design de origem: [App Landing Page — Finance Bank Money (Figma Community)](https://www.figma.com/design/Cqy9Vptjf00lyai2EfSCkY/App-Landing-Page-Finance-Bank-Money--Community-)
+Design de origem: [App Landing Page — Finance Bank Money (Figma Community)](https://www.figma.com/pt-br/comunidade/file/1145991068621514311/app-landing-page-finance-bank-money)
 
 ## Como este projeto foi desenvolvido
 
